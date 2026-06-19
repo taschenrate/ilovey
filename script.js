@@ -2,6 +2,7 @@ const state = {
   dateType: "",
   place: "",
   contact: "",
+  refusedAttempts: 0,
 };
 
 const screens = [...document.querySelectorAll(".screen")];
@@ -13,6 +14,9 @@ const noButton = document.getElementById("noButton");
 const noMessage = document.getElementById("noMessage");
 const yesButton = document.getElementById("yesButton");
 const contactInput = document.getElementById("contactInput");
+const submitButton = document.getElementById("submitButton");
+const submitButtonLabel = document.getElementById("submitButtonLabel");
+const submitButtonIcon = document.getElementById("submitButtonIcon");
 
 const stepMap = {
   date: 1,
@@ -21,9 +25,9 @@ const stepMap = {
   result: 4,
 };
 
-let noAttempts = 0;
 let currentScreen = "welcome";
 let lastNoMove = 0;
+let isSubmitting = false;
 
 const noPhrases = [
   "Ти впевнена? 😭",
@@ -91,11 +95,13 @@ function launchConfetti() {
   window.setTimeout(() => host.replaceChildren(), 3000);
 }
 
-function moveNoButton() {
+function moveNoButton(countAttempt = true) {
   const now = Date.now();
-  if (now - lastNoMove < 180) return;
+  if (countAttempt && now - lastNoMove < 180) return;
   lastNoMove = now;
-  noAttempts += 1;
+  if (countAttempt) {
+    state.refusedAttempts += 1;
+  }
   const rect = noButton.getBoundingClientRect();
   const padding = 14;
   const maxLeft = Math.max(padding, window.innerWidth - rect.width - padding);
@@ -106,13 +112,16 @@ function moveNoButton() {
   noButton.classList.add("is-running");
   noButton.style.left = `${Math.min(nextLeft, maxLeft)}px`;
   noButton.style.top = `${Math.min(nextTop, maxTop)}px`;
-  noMessage.textContent = noPhrases[(noAttempts - 1) % noPhrases.length];
+  if (!countAttempt) return;
 
-  if (noAttempts === 3) {
+  noMessage.textContent =
+    noPhrases[(state.refusedAttempts - 1) % noPhrases.length];
+
+  if (state.refusedAttempts === 3) {
     noMessage.textContent = "Ти вже 3 рази намагалася відмовитися 😭";
   }
 
-  if (noAttempts === 5) {
+  if (state.refusedAttempts === 5) {
     noMessage.textContent = "Добре, кнопка здається… але краще натисни «Так» 💕";
   }
 }
@@ -176,8 +185,10 @@ document.getElementById("placeContinue").addEventListener("click", () => {
   window.setTimeout(() => contactInput.focus({ preventScroll: true }), 450);
 });
 
-document.getElementById("contactForm").addEventListener("submit", (event) => {
+document.getElementById("contactForm").addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (isSubmitting) return;
+
   const value = contactInput.value.trim();
   const error = document.getElementById("contactError");
 
@@ -195,9 +206,47 @@ document.getElementById("contactForm").addEventListener("submit", (event) => {
 
   state.contact = value;
   error.textContent = "";
-  renderResult();
-  launchConfetti();
-  showScreen("result");
+
+  if (localStorage.getItem("answerSent") === "true") {
+    error.textContent = "Твоя відповідь уже надіслана 💖";
+    return;
+  }
+
+  isSubmitting = true;
+  setSubmitButtonLoading(true);
+
+  try {
+    const response = await fetch("/api/send-telegram", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        dateType: state.dateType,
+        place: state.place,
+        contact: state.contact,
+        refusedAttempts: state.refusedAttempts,
+      }),
+    });
+
+    const result = await response.json().catch(() => null);
+
+    if (!response.ok || !result?.success) {
+      throw new Error(result?.message || "Send failed");
+    }
+
+    localStorage.setItem("answerSent", "true");
+    localStorage.setItem("answerSentAt", String(Date.now()));
+    renderResult();
+    launchConfetti();
+    showScreen("result");
+  } catch (sendError) {
+    console.error("Не вдалося надіслати відповідь:", sendError);
+    error.textContent = "Не вдалося надіслати відповідь. Спробуй ще раз 💌";
+  } finally {
+    isSubmitting = false;
+    setSubmitButtonLoading(false);
+  }
 });
 
 contactInput.addEventListener("input", () => {
@@ -210,14 +259,22 @@ function renderResult() {
   document.getElementById("resultContact").textContent = state.contact;
 }
 
+function setSubmitButtonLoading(isLoading) {
+  submitButton.disabled = isLoading;
+  submitButtonLabel.textContent = isLoading ? "Надсилаємо..." : "Надіслати";
+  submitButtonIcon.hidden = isLoading;
+}
+
 function resetApp() {
   state.dateType = "";
   state.place = "";
   state.contact = "";
-  noAttempts = 0;
+  state.refusedAttempts = 0;
   lastNoMove = 0;
+  isSubmitting = false;
   noMessage.textContent = "";
   contactInput.value = "";
+  setSubmitButtonLoading(false);
   noButton.classList.remove("is-running");
   noButton.removeAttribute("style");
 
@@ -242,7 +299,7 @@ document.querySelector(".brand").addEventListener("click", (event) => {
 
 window.addEventListener("resize", () => {
   if (currentScreen === "invite" && noButton.classList.contains("is-running")) {
-    moveNoButton();
+    moveNoButton(false);
   }
 });
 

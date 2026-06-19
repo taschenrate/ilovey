@@ -1,0 +1,13 @@
+{
+  "name": "i-love-you-invitation",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "telegram:chat-id": "node --env-file=.env.local scripts/get-telegram-chat-id.js",
+    "test": "node tests/send-telegram.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

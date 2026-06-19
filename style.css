@@ -341,6 +341,17 @@ h2 {
   transform: translateY(0) scale(0.985);
 }
 
+.button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+  transform: none;
+}
+
+.button:disabled:hover {
+  box-shadow: 0 14px 30px rgba(255, 79, 163, 0.25);
+  transform: none;
+}
+
 .button:focus-visible,
 .option-card:focus-visible,
 input:focus-visible {
