@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Маленьке інтерактивне запрошення на побачення"
+    />
+    <meta name="theme-color" content="#fff7fb" />
+    <title>Підеш зі мною на побачення? 💗</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="ambient ambient--one" aria-hidden="true"></div>
+    <div class="ambient ambient--two" aria-hidden="true"></div>
+    <div class="floating-hearts" id="floatingHearts" aria-hidden="true"></div>
+    <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+    <main class="app">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="На початок">
+          <span class="brand__mark">♥</span>
+          <span>для тебе</span>
+        </a>
+        <div class="progress-wrap" id="progressWrap" hidden>
+          <span class="progress-label" id="progressLabel">Крок 1 із 5</span>
+          <div
+            class="progress"
+            role="progressbar"
+            aria-valuemin="1"
+            aria-valuemax="5"
+            aria-valuenow="1"
+          >
+            <span id="progressBar"></span>
+          </div>
+        </div>
+      </header>
+
+      <section class="screen is-active" data-screen="welcome">
+        <article class="card card--intro">
+          <div class="eyebrow">маленький сюрприз</div>
+          <div class="hero-heart" aria-hidden="true">
+            <span>♥</span>
+            <i></i>
+          </div>
+          <h1>Привіт!</h1>
+          <p class="lead">
+            Я зробив для тебе маленький сайт.<br />
+            Відповідай чесно :)
+          </p>
+          <button class="button button--primary" type="button" data-next="invite">
+            Почати
+            <span aria-hidden="true">→</span>
+          </button>
+          <p class="tiny-note">Це займе лише хвилинку</p>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="invite">
+        <article class="card card--invite">
+          <div class="mini-heart" aria-hidden="true">♥</div>
+          <p class="kicker">важливе питання</p>
+          <h2>Підеш зі мною<br />на побачення?</h2>
+          <p class="lead">Обіцяю, буде добре 💗</p>
+
+          <div class="invite-actions" id="inviteActions">
+            <button class="button button--primary button--yes" type="button" id="yesButton">
+              Так <span aria-hidden="true">♥</span>
+            </button>
+            <button class="button button--ghost button--no" type="button" id="noButton">
+              Відмовитися
+            </button>
+          </div>
+          <p class="no-message" id="noMessage" aria-live="polite"></p>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="celebrate">
+        <article class="card card--celebrate">
+          <div class="celebrate-icon" aria-hidden="true">♥</div>
+          <p class="kicker">саме те, що треба</p>
+          <h2>Урааа! 💕</h2>
+          <p class="lead">Я знав, що ти погодишся :)</p>
+          <button class="button button--primary" type="button" data-next="date">
+            Сплануймо
+            <span aria-hidden="true">→</span>
+          </button>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="date">
+        <article class="card card--wide">
+          <div class="section-heading">
+            <div>
+              <p class="kicker">крок перший</p>
+              <h2>Яке побачення обираєш?</h2>
+            </div>
+            <span class="heading-heart" aria-hidden="true">♥</span>
+          </div>
+
+          <div class="options-grid" id="dateOptions">
+            <button class="option-card" type="button" data-value="Кіно 🎬">
+              <span class="option-card__icon">🎬</span>
+              <span class="option-card__copy">
+                <strong>Кіно</strong>
+                <small>Подивимося щось разом.</small>
+              </span>
+              <span class="option-card__check">✓</span>
+            </button>
+            <button class="option-card" type="button" data-value="Кафе ☕">
+              <span class="option-card__icon">☕</span>
+              <span class="option-card__copy">
+                <strong>Кафе</strong>
+                <small>Посидимо, поговоримо і вип’ємо щось смачне.</small>
+              </span>
+              <span class="option-card__check">✓</span>
+            </button>
+            <button class="option-card" type="button" data-value="Прогулянка 🌆">
+              <span class="option-card__icon">🌆</span>
+              <span class="option-card__copy">
+                <strong>Прогулянка</strong>
+                <small>Просто погуляємо разом.</small>
+              </span>
+              <span class="option-card__check">✓</span>
+            </button>
+            <button class="option-card" type="button" data-value="Парк 🌿">
+              <span class="option-card__icon">🌿</span>
+              <span class="option-card__copy">
+                <strong>Парк</strong>
+                <small>Спокійне побачення на свіжому повітрі.</small>
+              </span>
+              <span class="option-card__check">✓</span>
+            </button>
+            <button class="option-card" type="button" data-value="Сюрприз 🎁">
+              <span class="option-card__icon">🎁</span>
+              <span class="option-card__copy">
+                <strong>Сюрприз</strong>
+                <small>Я сам усе придумаю.</small>
+              </span>
+              <span class="option-card__check">✓</span>
+            </button>
+            <button class="option-card" type="button" data-value="Домашній вечір 🍿">
+              <span class="option-card__icon">🍿</span>
+              <span class="option-card__copy">
+                <strong>Домашній вечір</strong>
+                <small>Їжа, фільм і затишок.</small>
+              </span>
+              <span class="option-card__check">✓</span>
+            </button>
+          </div>
+          <p class="form-error" id="dateError" aria-live="polite"></p>
+          <div class="card-footer">
+            <button class="button button--primary" type="button" id="dateContinue">
+              Продовжити <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="place">
+        <article class="card card--wide">
+          <div class="section-heading">
+            <div>
+              <p class="kicker">ще трохи</p>
+              <h2>Куди підемо?</h2>
+            </div>
+            <span class="heading-heart" aria-hidden="true">♥</span>
+          </div>
+
+          <div class="options-grid options-grid--compact" id="placeOptions">
+            <button class="option-card option-card--compact" type="button" data-value="Твій вибір">
+              <span class="option-card__icon">✨</span>
+              <span class="option-card__copy">
+                <strong>Твій вибір</strong>
+                <small>Обирай місце, яке тобі подобається.</small>
+              </span>
+              <span class="option-card__check">✓</span>
+            </button>
+            <button class="option-card option-card--compact" type="button" data-value="Мій вибір">
+              <span class="option-card__icon">📍</span>
+              <span class="option-card__copy">
+                <strong>Мій вибір</strong>
+                <small>Я знайду щось особливе.</small>
+              </span>
+              <span class="option-card__check">✓</span>
+            </button>
+            <button class="option-card option-card--compact" type="button" data-value="Улюблене місце">
+              <span class="option-card__icon">💞</span>
+              <span class="option-card__copy">
+                <strong>Улюблене місце</strong>
+                <small>Підемо туди, де вже добре.</small>
+              </span>
+              <span class="option-card__check">✓</span>
+            </button>
+            <button class="option-card option-card--compact" type="button" data-value="Щось нове">
+              <span class="option-card__icon">🗺️</span>
+              <span class="option-card__copy">
+                <strong>Щось нове</strong>
+                <small>Спробуємо разом нову локацію.</small>
+              </span>
+              <span class="option-card__check">✓</span>
+            </button>
+            <button class="option-card option-card--compact" type="button" data-value="Сюрприз">
+              <span class="option-card__icon">🎀</span>
+              <span class="option-card__copy">
+                <strong>Сюрприз</strong>
+                <small>Нехай усе вирішить інтрига.</small>
+              </span>
+              <span class="option-card__check">✓</span>
+            </button>
+            <button class="option-card option-card--compact" type="button" data-value="Обговоримо разом">
+              <span class="option-card__icon">💬</span>
+              <span class="option-card__copy">
+                <strong>Обговоримо разом</strong>
+                <small>Домовимося про ідеальний варіант.</small>
+              </span>
+              <span class="option-card__check">✓</span>
+            </button>
+          </div>
+          <p class="form-error" id="placeError" aria-live="polite"></p>
+          <div class="card-footer">
+            <button class="button button--primary" type="button" id="placeContinue">
+              Далі <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="contact">
+        <article class="card card--form">
+          <div class="form-icon" aria-hidden="true">💌</div>
+          <p class="kicker">останній штрих</p>
+          <h2>Як з тобою зв’язатися?</h2>
+          <p class="lead">
+            Залиши свій Telegram, Instagram<br class="desktop-only" />
+            або номер телефону.
+          </p>
+          <form id="contactForm" novalidate>
+            <label for="contactInput">Твій контакт</label>
+            <div class="input-wrap">
+              <span aria-hidden="true">@</span>
+              <input
+                id="contactInput"
+                name="contact"
+                type="text"
+                autocomplete="off"
+                placeholder="username або номер"
+                minlength="3"
+              />
+            </div>
+            <p class="form-error form-error--left" id="contactError" aria-live="polite"></p>
+            <button class="button button--primary button--full" type="submit">
+              Надіслати <span aria-hidden="true">♥</span>
+            </button>
+          </form>
+          <p class="privacy-note">🔒 Залишиться лише на цьому пристрої</p>
+        </article>
+      </section>
+
+      <section class="screen" data-screen="result">
+        <article class="card card--result">
+          <div class="result-badge" aria-hidden="true">♥</div>
+          <p class="kicker">усе склалося</p>
+          <h2>Ідеально! 💕</h2>
+          <p class="lead">Наш план побачення готовий.</p>
+
+          <div class="summary">
+            <div class="summary__row">
+              <span class="summary__icon">💗</span>
+              <div>
+                <small>Побачення</small>
+                <strong id="resultDate">—</strong>
+              </div>
+            </div>
+            <div class="summary__row">
+              <span class="summary__icon">📍</span>
+              <div>
+                <small>Місце</small>
+                <strong id="resultPlace">—</strong>
+              </div>
+            </div>
+            <div class="summary__row">
+              <span class="summary__icon">💌</span>
+              <div>
+                <small>Контакт</small>
+                <strong id="resultContact">—</strong>
+              </div>
+            </div>
+          </div>
+
+          <p class="final-note">Я напишу тобі найближчим часом 💌</p>
+          <button class="button button--ghost button--full" type="button" id="restartButton">
+            Почати спочатку
+          </button>
+        </article>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
