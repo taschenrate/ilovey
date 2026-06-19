@@ -27,6 +27,28 @@ function formatSubmittedAt(date = new Date()) {
   }).format(date);
 }
 
+function getTelegramErrorMessage(status, description = "") {
+  const normalizedDescription = description.toLowerCase();
+
+  if (status === 401) {
+    return "Неправильний токен Telegram-бота";
+  }
+
+  if (status === 403) {
+    return "Бот не може написати в цей чат. Розблокуй бота та натисни /start";
+  }
+
+  if (
+    status === 400 &&
+    (normalizedDescription.includes("chat not found") ||
+      normalizedDescription.includes("chat_id"))
+  ) {
+    return "Telegram-чат не знайдено. Напиши боту /start і перевір TELEGRAM_CHAT_ID";
+  }
+
+  return "Telegram відхилив повідомлення. Перевір токен і TELEGRAM_CHAT_ID";
+}
+
 module.exports = async function sendTelegram(request, response) {
   if (request.method !== "POST") {
     response.setHeader("Allow", "POST");
@@ -112,7 +134,19 @@ module.exports = async function sendTelegram(request, response) {
     const telegramResult = await telegramResponse.json().catch(() => null);
 
     if (!telegramResponse.ok || !telegramResult?.ok) {
-      throw new Error(`Telegram API returned ${telegramResponse.status}`);
+      const safeMessage = getTelegramErrorMessage(
+        telegramResponse.status,
+        telegramResult?.description,
+      );
+
+      console.error(
+        `Telegram API rejected the request: ${telegramResponse.status} ${telegramResult?.description || ""}`,
+      );
+
+      return sendJson(response, 502, {
+        success: false,
+        message: safeMessage,
+      });
     }
 
     recentSuccessfulRequests.set(clientKey, Date.now());
@@ -132,6 +166,7 @@ module.exports = async function sendTelegram(request, response) {
 
 module.exports._test = {
   formatSubmittedAt,
+  getTelegramErrorMessage,
   normalizeText,
   recentSuccessfulRequests,
 };

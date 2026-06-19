@@ -232,7 +232,9 @@ document.getElementById("contactForm").addEventListener("submit", async (event) 
     const result = await response.json().catch(() => null);
 
     if (!response.ok || !result?.success) {
-      throw new Error(result?.message || "Send failed");
+      const sendError = new Error(result?.message || "Send failed");
+      sendError.userMessage = result?.message;
+      throw sendError;
     }
 
     localStorage.setItem("answerSent", "true");
@@ -242,7 +244,9 @@ document.getElementById("contactForm").addEventListener("submit", async (event) 
     showScreen("result");
   } catch (sendError) {
     console.error("Не вдалося надіслати відповідь:", sendError);
-    error.textContent = "Не вдалося надіслати відповідь. Спробуй ще раз 💌";
+    error.textContent =
+      sendError.userMessage ||
+      "Не вдалося надіслати відповідь. Спробуй ще раз 💌";
   } finally {
     isSubmitting = false;
     setSubmitButtonLoading(false);

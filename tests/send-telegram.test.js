@@ -79,6 +79,15 @@ async function run() {
     assert.match(telegramBody.text, /Побачення: Кафе/);
     assert.match(telegramBody.text, /Спроб відмовитись: 4/);
 
+    assert.equal(
+      handler._test.getTelegramErrorMessage(400, "Bad Request: chat not found"),
+      "Telegram-чат не знайдено. Напиши боту /start і перевір TELEGRAM_CHAT_ID",
+    );
+    assert.equal(
+      handler._test.getTelegramErrorMessage(401, "Unauthorized"),
+      "Неправильний токен Telegram-бота",
+    );
+
     const limitedResponse = createResponse();
     await handler(
       {
